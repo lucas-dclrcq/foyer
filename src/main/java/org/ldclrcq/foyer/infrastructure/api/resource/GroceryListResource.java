@@ -3,6 +3,7 @@ package org.ldclrcq.foyer.infrastructure.api.resource;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.ldclrcq.foyer.domain.model.GroceryList;
 import org.ldclrcq.foyer.domain.usecase.GroceryListCreator;
 import org.ldclrcq.foyer.domain.usecase.GroceryListFetcher;
@@ -13,7 +14,10 @@ import org.ldclrcq.foyer.infrastructure.api.mapper.GroceryListMapper;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
+import java.security.Principal;
 
 @Path("/lists")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -36,7 +40,8 @@ public class GroceryListResource {
     }
 
     @POST
-    public Uni<GroceryListDTO> create(GroceryListCreateDTO dto) {
+    public Uni<GroceryListDTO> create(@RequestBody GroceryListCreateDTO dto, @Context SecurityContext sec) {
+        Principal user = sec.getUserPrincipal();
         final GroceryList groceryList = mapper.toDomain(dto).withOwnerId(userId);
         return groceryListCreator.execute(groceryList).map(mapper::toDTO);
     }

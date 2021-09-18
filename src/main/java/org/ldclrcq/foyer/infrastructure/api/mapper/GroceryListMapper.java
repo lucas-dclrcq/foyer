@@ -12,5 +12,8 @@ public interface GroceryListMapper {
     GroceryListDTO toDTO(GroceryList groceryList);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "externalId", ignore = true)
+    @Mapping(target = "ownerId", ignore = true)
+    @Mapping(target = "name", source = "name")
     GroceryList toDomain(GroceryListCreateDTO createDTO);
 }
